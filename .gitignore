@@ -1,0 +1,13 @@
+data/
+results/
+simulation/__pycache__/
+analysis/__pycache__/
+motor_model.egg-info/
+__pycache__/
+.ipynb_checkpoints/
+exp_data/
+figures/processed/
+simulation/.ipynb_checkpoints/
+tasks/__pycache__/
+tools/__pycache__/
+tasks/.ipynb_checkpoints/
