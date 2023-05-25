@@ -1,0 +1,16 @@
+LICENSE
+README.md
+setup.py
+config_manager/__init__.py
+config_manager/base_configuration.py
+config_manager/config_field.py
+config_manager/config_template.py
+config_manager.egg-info/PKG-INFO
+config_manager.egg-info/SOURCES.txt
+config_manager.egg-info/dependency_links.txt
+config_manager.egg-info/requires.txt
+config_manager.egg-info/top_level.txt
+tests/__init__.py
+tests/constants.py
+tests/test_base_configuration.py
+tests/test_integration.py

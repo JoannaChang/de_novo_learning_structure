@@ -1,0 +1,13 @@
+LICENSE
+README.md
+setup.py
+pyaldata/__init__.py
+pyaldata/movement_onset_and_peak.py
+pyaldata/regression.py
+pyaldata/tools.py
+pyaldata/utils.py
+pyaldata.egg-info/PKG-INFO
+pyaldata.egg-info/SOURCES.txt
+pyaldata.egg-info/dependency_links.txt
+pyaldata.egg-info/requires.txt
+pyaldata.egg-info/top_level.txt
