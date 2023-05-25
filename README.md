@@ -11,4 +11,4 @@ This repository includes code to reproduce the simulations and figures in [Chang
 3. Change the project directory to the root of the repository under ```PROJ_DIR``` in ```constants.py```
 
 ## Reproducing figures
-Each figure in the paper has an associated Jupyter notebook under ```paper/```. Running the cells reproduces all of the subfigures, and the first cell runs the simulations associated with the figure. Note that the experimental data used for Supplementary Figure 6 is not included but may be available upon reasonable request. The code and figures are still provided.
+Each figure in the paper has an associated Jupyter notebook under ```paper/```. Running the cells reproduces all of the subfigures, and the first cell runs the simulations associated with the figure. Note that the experimental data used for Supplementary Figure 6 is currently not included but will be available upon publication. The code and figures are still provided.
