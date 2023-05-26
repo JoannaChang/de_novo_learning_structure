@@ -1,6 +1,6 @@
 # _De novo_ motor learning creates structure in neural activity space that shapes adaptation
 
-This repository includes code to reproduce the simulations and figures in [Chang et. al (bioRxiv, 2023)](https://www.biorxiv.org/content/10.1101/2023.05.23.541925v1).
+This repository includes code to reproduce the simulations and figures in [Chang et. al (bioRxiv, 2023)](https://www.biorxiv.org/content/10.1101/2023.05.23.541925v2).
 
 ## Getting Started
 
