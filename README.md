@@ -15,3 +15,6 @@ Each figure in the paper has an associated Jupyter notebook under ```paper/```. 
 
 ## System Requirements
 The code has been tested on Linux (Ubuntu 18.04). Around 45GB is required for the data used for all main and supplementary figures, and an additional 7GB is needed for the results.
+
+## License
+[MIT](https://opensource.org/license/mit/)
