@@ -12,3 +12,6 @@ This repository includes code to reproduce the simulations and figures in [Chang
 
 ## Reproducing figures
 Each figure in the paper has an associated Jupyter notebook under ```paper/```. Running the cells reproduces all of the subfigures, and the first cell runs the simulations associated with the figure. Note that the experimental data used for Supplementary Figure 6 is currently not included but will be available upon publication. The code and figures are still provided.
+
+## System Requirements
+The code has been tested on Linux (Ubuntu 18.04). Around 45GB is required for the data used for all main and supplementary figures, and an additional 7GB is needed for the results.
