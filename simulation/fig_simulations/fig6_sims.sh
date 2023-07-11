@@ -5,12 +5,15 @@ export nseeds=${#sds[@]}
 export threads=2
 export incr=$((nseeds / threads))
 
-# MAKE DATASETS
-python3 tasks/synth_dataset.py
-seeds=($seed_str)
+# MAKE DATASETS (only need to do this once)
+# python3 tasks/synth_dataset.py
+# seeds=($seed_str)
+# for seed in ${seeds[@]}
+# do
+#     python3 tasks/rotate_dataset.py $seed
+# done
 for seed in ${seeds[@]}
 do
-    python3 tasks/rotate_dataset.py $seed
     python3 tasks/reassoc_dataset.py $seed
 done
 

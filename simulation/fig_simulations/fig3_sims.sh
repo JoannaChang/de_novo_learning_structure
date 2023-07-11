@@ -5,7 +5,7 @@ export nseeds=${#sds[@]}
 export threads=2
 export incr=$((nseeds / threads))
 
-# MAKE DATASETS
+# MAKE DATASETS (only need to do this once)
 # python3 tasks/synth_dataset.py
 # seeds=($seed_str)
 # for seed in ${seeds[@]}

@@ -5,7 +5,7 @@ export nseeds=${#sds[@]}
 export threads=1
 export incr=$((nseeds / threads))
 
-# MAKE DATASETS
+# MAKE DATASETS (only need to do this once)
 # seeds=($seed_str)
 # for seed in ${seeds[@]}
 # do
