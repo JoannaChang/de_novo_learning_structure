@@ -4,12 +4,13 @@ from matplotlib import cm
 
 class Constants:
     # DIRECTORIES ##################################################
-    PROJ_DIR="/home/jcc319/structure_proj/" #change based on your directory structure
+    PROJ_DIR="/home/jcc319/structure/" #change based on your directory structure
     RESULTS_FOLDER = "results/"
     DATA_FOLDER = "data/"
     EXP_DATA_FOLDER = "exp_data/"
     FIG_FOLDER = PROJ_DIR + 'figures/'
     PROCESSED_DATA_FOLDER = FIG_FOLDER + 'processed/'
+    CONFIGS_DIR = "simulation/configs/"
 
     # RANDOM #######################################################
     RNG = np.random.default_rng(np.random.SeedSequence(12345))
@@ -70,11 +71,35 @@ class Constants:
     UNIS_ABR = [x.replace("uni_","") for x in UNIS]
     UNIS_ABR = [x[0]+ ' Mov.' for x in UNIS_ABR]
 
+    ## AMPA_MOVESET for tasks with 2 sinewaves with variable amplitude in first sinewave, fixed freq
+    AMPA1_MOVESET = 'ampA1'
+    AMPSA1 = [
+        'ampA1_1.0',
+        'ampA1_2movs_1_7',
+        'ampA1_3movs_1_7',
+        'ampA1_4movs_1_7',
+        ]
+    
+    AMPSA1_ABR = [f'{x+1} Mov.' for x in range(4)]
+
+    AMPB1_MOVESET = 'ampB1'
+    AMPSB1 = [
+        'ampB1_1.0',
+        'ampB1_2movs_1_7',
+        'ampB1_3movs_1_7',
+        'ampB1_4movs_1_7',
+        ]
+    
+    AMPSB_ABR = [f'{x+1} Mov.' for x in range(4)]
+     
+
     # MOVESET DICTS #################################################
 
     REPERTOIRE_ABR_DICTS = {
         CO_MOVESET: dict(zip(COS, COS_ABR)),
         UNI_MOVESET: dict(zip(UNIS, UNIS_ABR)),
+        AMPA1_MOVESET: dict(zip(AMPSA1, AMPSA1_ABR)),
+        AMPB1_MOVESET: dict(zip(AMPSB1, AMPSB_ABR)),
     }
 
     # SIM_SETS ######################################################
@@ -84,14 +109,25 @@ class Constants:
         'uni_onehot': "_onehot",
         'uni_rad': "_rad",
         'uni_synth_rad': "_synth_rad",
+        'uni_synth_fixed_rad': "_synth_fixed_rad",
+        'uni_noprep_rad': "_noprep_rad",
+        'uni_noprep_onehot': "_noprep_onehot",
+        'ampA1_cont_onehot': "_cont_onehot",
+        'ampB1_cont_onehot': "_cont_onehot",
+
     }
     
     SIM_SET_TASKS ={
         'centerout_rad': '_rad',
         'centerout_onehot': '_onehot',
         'uni_synth_rad': UNIS,
+        'uni_synth_fixed_rad': UNIS,
+        'uni_noprep_rad': UNIS,
+        'uni_noprep_onehot': UNIS,
         'uni_rad': UNIS,
         'uni_onehot': UNIS,
+        'ampA1_cont_onehot': AMPSA1,
+        'ampB1_cont_onehot': AMPSB1,
     }
 
     # SIMULATION PARAMETERS ######################################################
@@ -110,6 +146,10 @@ class Constants:
     PERT_ROTATION = "rotation"
     # PERT_LENGTH = "length"
     PERT_REASSOCIATION = "reassoc"
+    PERT_AMPLITUDE = "pertamp"
+    PERT_AMPLITUDE_A = "pertampA"
+    PERT_AMPLITUDE_B = "pertampB"
+    PERT_FREQUENCY = "pertfreq"
     
     PERTURBATIONS = [PERT_ROTATION]
     PERT_PARAMS_DICT = {

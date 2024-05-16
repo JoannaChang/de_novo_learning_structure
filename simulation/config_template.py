@@ -22,14 +22,24 @@ class ConfigTemplate:
                         'centerout_rad',
                         'centerout_onehot',
                         'uni_synth_rad',
+                        'uni_synth_fixed_rad',
+                        'uni_noprep_rad',
+                        'uni_noprep_onehot',
                         'uni_rad',
-                        'uni_onehot',
+                        'uni_onehot',   
+                        'ampA1_cont_onehot',
+                        'ampB1_cont_onehot',
                     ]
                 ],
             ),
             config_field.Field(
                 name='repertoire',
                 types=[str, type(None)],
+            ),
+            config_field.Field(
+                name='config_number',
+                default='None',
+                types=[int, type(None)],
             ),
             config_field.Field(
                 name='istest',
@@ -85,8 +95,9 @@ class ConfigTemplate:
                     lambda x: x in [
                         None, 
                         constants.Constants.PERT_ROTATION,
-                        # constants.Constants.PERT_LENGTH,
                         constants.Constants.PERT_REASSOCIATION,
+                        constants.Constants.PERT_AMPLITUDE_A,
+                        constants.Constants.PERT_AMPLITUDE_B,
                         ]
                 ],
             ),

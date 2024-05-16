@@ -3,7 +3,7 @@ from constants import Constants
 import os
 
 def set_rc_params(dictArg:dict ={}):
-    mpl.rcParams['axes.titlesize'] = 20
+    mpl.rcParams['axes.titlesize'] = 10
     mpl.rcParams['axes.labelsize'] = 20
     mpl.rcParams['ytick.labelsize'] = 16
     mpl.rcParams['xtick.labelsize'] = 16

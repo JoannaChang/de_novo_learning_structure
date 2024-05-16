@@ -61,7 +61,8 @@ class RNN_single(nn.Module):
         if freeze_rec:
             self.rnn_l1.weight_hh_l0.requires_grad = False
         
-        self.perturb_output = Perturbation(n_outputs, self.dtype)
+        if self.n_outputs > 1:
+            self.perturb_output = Perturbation(n_outputs, self.dtype)
 
     
     def save_parameters(self):
@@ -117,7 +118,11 @@ class RNN_single(nn.Module):
             
             hiddenl1[j] = r1
             outv[j] = self.noarm_output(r1)
-            outp[j] = self.perturb_output(outv[j],perturb[j])
+
+            if self.n_outputs > 1:
+                outp[j] = self.perturb_output(outv[j],perturb[j])
+            else:
+                outp[j] = outv[j]
         return outv, outp, hiddenl1
 
     def force_training(self, X, perturb, P, output_weights_inv, target,
@@ -147,7 +152,8 @@ class RNN_single(nn.Module):
             hiddenl1[j] = r1
 
             outv[j] = self.noarm_output(r1)
-            outp[j] = self.perturb_output(outv[j],perturb[j])
+            if self.n_outputs > 1:
+                outp[j] = self.perturb_output(outv[j],perturb[j])
         
             # Now for the RLS algorithm:
             # compute errors
@@ -179,7 +185,6 @@ class RNN_single(nn.Module):
 
     def f_step(self,xin,x1,r1, single_step = False, batch_size = None):
 
-        # print(self.rnn_l1.weight_hh_l0)
         if single_step:
             self.batch_size = 1
 
