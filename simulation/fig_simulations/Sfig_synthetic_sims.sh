@@ -6,12 +6,12 @@ export threads=1
 export incr=$((nseeds / threads))
 
 # MAKE DATASETS (only need to do this once)
-# python3 tasks/synth_dataset.py
-# seeds=($seed_str)
-# for seed in ${seeds[@]}
-# do
-#     python3 tasks/rotate_dataset.py $seed
-# done
+python3 tasks/synth_dataset.py
+seeds=($seed_str)
+for seed in ${seeds[@]}
+do
+    python3 tasks/rotate_dataset.py $seed
+done
 
 # SIMULATIONS
 for ((i=0;i<$threads;i++)); 
@@ -22,9 +22,9 @@ do
     for seed in ${seeds[@]:$((i*incr)):$(((i+1)*incr))}
     do  
         # SYNTHETIC MOVEMENTS
-        export sim_set=uni_synth_rad
+        export sim_set=uni_synth_fixed_rad
         export repertoire_pre=uni_
-        export file=${repertoire_pre}10.0_synth_rad
+        export file=${repertoire_pre}10.0_synth_fixed_rad
 
         for repertoire in 10.0 2movs_10_50 3movs_10_50 4movs_10_50
         do

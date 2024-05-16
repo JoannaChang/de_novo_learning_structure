@@ -1,14 +1,11 @@
 #%%
 import importlib
 import numpy as np
-from scipy.stats.stats import WeightedTauResult
 import constants
 import sys
 import math
 import create_dataset_toolbox as ct
-importlib.reload(constants)
 import os
-importlib.reload(ct)
 
 #%%
 # set random seed
@@ -22,7 +19,7 @@ if not os.path.exists(savdir):
     os.makedirs(savdir)
 
 #%%
-def create_rotated_dataset(orig_data:dict,angle:float,moveset:str, movnum:int = None, encoding:str='rad'):
+def create_rotated_dataset(orig_data:dict,angle:float,moveset:str, movnum:int = None, encoding:str='rad', use_prep:bool = True):
     """ 
     Creates dataset with center-out reaches.
     For "uni" movesets: all trajectories reach towards/is rotated by a certain angle. Dataset corresponds to one movement.
@@ -42,8 +39,8 @@ def create_rotated_dataset(orig_data:dict,angle:float,moveset:str, movnum:int = 
         transformed dataset
     """
     # transform training and test data
-    dic = create_rotated_data(orig_data, angle, moveset, movnum = movnum, encoding= encoding)
-    dic['test_set1'] = create_rotated_data(orig_data['test_set1'], angle, moveset, movnum = movnum, encoding= encoding)
+    dic = create_rotated_data(orig_data, angle, moveset, movnum = movnum, encoding= encoding, use_prep = use_prep)
+    dic['test_set1'] = create_rotated_data(orig_data['test_set1'], angle, moveset, movnum = movnum, encoding= encoding, use_prep = use_prep)
     dic['test_set1']['params'] = dic['params']
     return dic
 
@@ -120,7 +117,7 @@ def rotate_centerout_onehot_stimulus(orig_data:dict):
         stimulus[i,cue_onset:,target_id[i]+1] = 2 #same magnitude as hold cue
     return stimulus
 
-def create_rotated_data(orig_data:dict, angle:float, moveset:str, movnum:int = None, encoding:str = 'rad'):
+def create_rotated_data(orig_data:dict, angle:float, moveset:str, movnum:int = None, encoding:str = 'rad', use_prep:bool = True):
     """ 
     Creates data with all trajectories reaching towards/rotated by a certain angle. 
     Data could be training/test data.
@@ -145,6 +142,9 @@ def create_rotated_data(orig_data:dict, angle:float, moveset:str, movnum:int = N
     angle_rad = math.radians(angle)
     rotation = np.array([[math.cos(angle_rad), -math.sin(angle_rad)],[math.sin(angle_rad), math.cos(angle_rad)]])
     target = orig_data['target'] @ rotation # rotate clockwise
+
+    if not use_prep:
+        orig_data['cue_onset'] = orig_data['go_onset']
 
     # add mov encoding to stimulus
     if moveset == constants.Constants.UNI_MOVESET:
@@ -197,7 +197,7 @@ def params_in_range(start_param:int, end_param:int, nmovs:int):
     params = np.round(params, decimals = 1)
     return params
 
-def create_datasets_range(orig_data:dict, moveset:str, dir_pre:str, data_suffix:str, start_param:int, end_param:int, nmovs:int, ntrials:int, ntest_trials:int, encoding:str = 'rad', redo:bool = False):
+def create_datasets_range(orig_data:dict, moveset:str, dir_pre:str, data_suffix:str, start_param:int, end_param:int, nmovs:int, ntrials:int, ntest_trials:int, encoding:str = 'rad', redo:bool = False, use_prep:bool = True):
     """ 
     Creates multi-mov datasets spanning range of movement params
 
@@ -229,7 +229,7 @@ def create_datasets_range(orig_data:dict, moveset:str, dir_pre:str, data_suffix:
         if (not onehot) & os.path.exists(dir) & (not redo):
             datasets.append(np.load(dir,allow_pickle = True).item())
         else:
-            dataset = create_rotated_dataset(orig_data, param, moveset, movnum = i, encoding = encoding)
+            dataset = create_rotated_dataset(orig_data, param, moveset, movnum = i, encoding = encoding, use_prep = use_prep)
             np.save(dir, dataset)
             datasets.append(dataset)
     
@@ -275,19 +275,6 @@ for nmovs in [2,3,4]:
         create_datasets_range(orig_data, moveset, savdir+repertoire_pre, data_suffix, 
                         10, end_param, nmovs, ntrials, ntesttrials, encoding=encoding)
 
-#%%
-# use uni-target dataset based on synthetic reaches
-orig_data = np.load(constants.Constants.PROJ_DIR +constants.Constants.DATA_FOLDER + 'dataset_uni_synth.npy',allow_pickle = True).item()
-moveset = constants.Constants.UNI_MOVESET
-repertoire_pre = 'uni_'
-
-## stimulus with 2D cue: cos(angle), sin(angle)
-data_suffix = '_synth_rad' 
-encoding = 'rad'
-for nmovs in [2,3,4]:
-    for end_param in [30,50,70,90]:
-        create_datasets_range(orig_data, moveset, savdir+repertoire_pre, data_suffix, 
-                        10, end_param, nmovs, ntrials, ntesttrials, encoding=encoding)
 
 #%%
 # CENTEROUT DATASETS
@@ -302,21 +289,53 @@ orig_data = np.load(constants.Constants.PROJ_DIR +constants.Constants.DATA_FOLDE
 dataset = create_rotated_dataset(orig_data, angle = 0, moveset = moveset, encoding='onehot')
 np.save(savdir +'centerout_onehot.npy', dataset) 
 
+
+# UNI, SYNTHETIC, FIXED ONSETS ############################
+# use uni-target dataset based on synthetic reaches with fixed onsets
+orig_data = np.load(constants.Constants.PROJ_DIR +constants.Constants.DATA_FOLDER + 'dataset_uni_synth_fixed.npy',allow_pickle = True).item()
+moveset = constants.Constants.UNI_MOVESET
+repertoire_pre = 'uni_'
+## stimulus with 2D cue: cos(angle), sin(angle)
+data_suffix = '_synth_fixed_rad' 
+encoding = 'rad'
+for nmovs in [2,3,4]:
+    for end_param in [30,50,70,90]:
+        create_datasets_range(orig_data, moveset, savdir+repertoire_pre, data_suffix, 
+                        10, end_param, nmovs, ntrials, ntesttrials, encoding=encoding)
+
+# UNI, WITHOUT PREP #######################################
+# use uni-target dataset based on experimental reaches
+orig_data = np.load(constants.Constants.PROJ_DIR +constants.Constants.DATA_FOLDER + 'dataset_uni.npy',allow_pickle = True).item()
+moveset = constants.Constants.UNI_MOVESET
+repertoire_pre = 'uni_'
+
+## stimulus with 2D cue: cos(angle), sin(angle)
+data_suffix = '_noprep_rad' 
+encoding = 'rad'
+### movements spanning clockwise
+for nmovs in [2,3,4]:
+    create_datasets_range(orig_data, moveset, savdir+repertoire_pre, data_suffix, 10, 50, nmovs, ntrials, ntesttrials, encoding=encoding, use_prep = False)
+
+## stimulus with one-hot encoded cue for each target
+data_suffix = '_noprep_onehot' 
+encoding = 'onehot'
+for nmovs in [2,3,4]:
+    create_datasets_range(orig_data, moveset, savdir+repertoire_pre, data_suffix, 10, 50, nmovs, ntrials, ntesttrials, encoding=encoding, use_prep = False)
+
+
 # %%
 # import matplotlib.pyplot as plt
 # import constants
-# importlib.reload(constants)
-# import analysis.tools.output as ot
-# importlib.reload(ot)
+# import tools.dataTools as dt
 
-# seed = 100
+# seed = 1000000
 # repertoires = constants.Constants.UNIS
-# moveset = ot.get_moveset(repertoires[0])
-# dataset = '_vel_rad'
+# moveset = dt.get_moveset(repertoires[0])
+# dataset = '_noprep_rad'
 
 # trial_index = 100
 # repertoire = 'uni_4movs_10_50'
-# data = ot.get_repertoire_data(dataset, repertoire, seed)
+# data = dt.get_repertoire_data(dataset, repertoire, seed)
 # stimulus = data['stimulus']
 # target = data['target']
 
@@ -333,7 +352,9 @@ np.save(savdir +'centerout_onehot.npy', dataset)
 #                 ymin = -2, ymax = 2, linestyles = 'dashed')
 # axs[1].set_ylabel('position')
 
-# colormap = ot.get_colormap(data['target_param'])
+# colormap = dt.get_colormap(data['target_param'])
 # plt.figure()
 # for i in range(target.shape[0]):
 #     plt.plot(target[i,:,0],target[i,:,1],  label = i, c = colormap[data['target_param'][i]])
+
+# %%

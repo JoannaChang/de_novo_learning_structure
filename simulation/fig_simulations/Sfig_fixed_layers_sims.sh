@@ -11,7 +11,7 @@ export incr=$((nseeds / threads))
 # for seed in ${seeds[@]}
 # do
 #     python3 tasks/rotate_dataset.py $seed
-#     # python3 tasks/reassoc_dataset.py $seed
+#     python3 tasks/reassoc_dataset.py $seed
 # done
 
 # SIMULATIONS

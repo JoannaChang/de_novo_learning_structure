@@ -2,7 +2,7 @@
 export seed_str='1000000 1000001 1000002 1000003 1000004 1000005 1000006 1000007 1000008 1000009'
 export sds=($seed_str)
 export nseeds=${#sds[@]}
-export threads=1
+export threads=2
 export incr=$((nseeds / threads))
 
 # MAKE DATASETS (only need to do this once)

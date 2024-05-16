@@ -12,7 +12,7 @@ from collections import OrderedDict
 class Runner:
     """ Object to run simulations ."""
     
-    def __init__(self, config: base_configuration.BaseConfiguration, proj_dir: str, training=True) -> None:
+    def __init__(self, config: base_configuration.BaseConfiguration, proj_dir: str, training: bool=True) -> None:
         """ 
         Class for running simulations.
 
@@ -89,60 +89,6 @@ class Runner:
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         plt.savefig(self._outdir + "loss.png")
-
-    # def get_hidden_from_test(self, epoch=None):
-    #     """ 
-    #     Set up and test an existing model. 
-
-    #     Parameters
-    #     ----------
-    #     epoch: int
-    #         epoch that model was saved at during training
-
-    #     Returns
-    #     ---------- 
-    #     hidden1: np array 
-    #         hidden states before activation
-
-    #     """
-    #     model = self._load_model(self._outdir, self.model, epoch)
-    #     model.eval()
-
-    #     # get data and perturbation info
-    #     stimulus = self.data.stimulus
-
-    #     # set up in pytorch form
-    #     stimt = torch.Tensor(stimulus.transpose(1,0,2)).type(self.dtype) #to tstep, trial, nstim
- 
-    #     with torch.no_grad():
-    #         # run model
-    #         hiddenl1 = model.get_hidden(stimt)
-
-    #     hidden1 = hiddenl1.cpu().detach().numpy().transpose(1,0,2)
-        
-    #     return hidden1
-
-    # def run_test_hidden(self, stimt, perturbt, hidden1):
-    #     model = self._load_model(self._outdir, self.model, epoch)
-    #     model.eval()
-
-    #     with torch.no_grad():
-    #         # run model
-    #         if self._config.network == 'RNN_single':
-    #             testout_pre, testout,testl1 = model(stimt, perturbt, hidden1 = hidden1)
-    #         else:
-    #             raise ValueError("network not implemented")
-
-    #     # save it
-    #     output_pre = testout_pre.cpu().detach().numpy().transpose(1,0,2)
-    #     output = testout.cpu().detach().numpy().transpose(1,0,2)
-    #     activity1 = testl1.cpu().detach().numpy().transpose(1,0,2)
-        
-    #     if self._config.network == 'RNN_arm':
-    #         output[:,:,1] = output[:,:,1] + Constants.ARM_YOFFSET 
-
-    #     return self._config.datadir, output_pre, output, activity1, activity2
-
 
     def run_test(self, epoch:int=None, r1_input:np.array=None):
         """ 
@@ -521,7 +467,7 @@ class Runner:
                 #calculate testing error
                 test_error = self._test_current_model(stimt, perturbt, targett)
                 #TODO: simplify this
-                train_running_loss = [loss_train.detach().item(), test_error.detach().item(), [], [], mean_total_dw]
+                train_running_loss = [loss_train.detach().item(), test_error.detach().item()]
 
                 toprint = OrderedDict()
                 toprint['Loss'] = loss_train

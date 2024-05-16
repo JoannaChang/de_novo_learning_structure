@@ -1,0 +1,49 @@
+outdir:
+gpu_id: 0
+seed: 20
+timestamp:
+
+simulation:
+  type: init_training
+  sim_set: uni_rad
+  repertoire:
+  istest: False
+  vary:
+  training_dir:
+  network: 'RNN_single'
+  nonlin: tanh
+  optimizer: 'Adam'
+  freeze_input: False
+  freeze_rec: False
+
+perturbation:
+  perturbation: 
+  pert_params: [0]
+
+data:
+  datadir: 
+  datafile:
+
+neurons:
+  n1: 300
+  tau: 0.05
+  g1: 1.2
+  gin: 0.1
+  gout: 0.1
+  noise: 0.2
+
+regularization:
+  alpha1: 0.001
+  gamma1: 0.001
+  beta1: 0.5
+  clipgrad: 0.2
+
+training:
+  batch_size: 64
+  training_trials: 750
+  lr: 0.0001
+
+logging:
+  log_model: False
+  log_interval:
+  log_epochs:

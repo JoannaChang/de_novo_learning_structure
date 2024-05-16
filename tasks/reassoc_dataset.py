@@ -11,7 +11,7 @@ importlib.reload(ct)
 #%%
 #set random seed
 seed = int(sys.argv[1])
-# seed = 100
+# seed = 1000000
 print(seed)
 np.random.seed(seed)
 
@@ -20,15 +20,15 @@ if not os.path.exists(savdir):
     os.makedirs(savdir)
 
 #%%
-def create_reassoc_dataset(dir_pre:str, dataset_name:str):
+def create_reassoc_dataset(cont_data:dict, onehot_data:dict):
     """ 
     Creates dataset with reassociated targets. 
     E.g. stimulus 1 originally associated with target 1 must now produce target 2.
 
     Parameters
     ----------
-    dir_pre: directory prefix to store dataset
-    dataset_name: name of dataset
+    cont_data: original data with continuous stimuli
+    onehot_data: original data with onehot stimuli
     
     Returns
     ----------
@@ -37,17 +37,15 @@ def create_reassoc_dataset(dir_pre:str, dataset_name:str):
     onehot_data: dataframe
         dataset with uninformative, one-hot encoded stimuli
     """
-    #load original data, make sure same reassociations are used for both rad and onehot datasets
-    rad_data = np.load(dir_pre+dataset_name+'_rad'+'.npy', allow_pickle=True).item()
-    onehot_data = np.load(dir_pre+dataset_name+'_onehot'+'.npy', allow_pickle=True).item()
-    nmovs = rad_data['params']['nmovs']
+    # make sure same reassociations are used for both cont and onehot datasets
+    nmovs = cont_data['params']['nmovs']
 
     #reassociate targets and mov numbers
-    _, idx = np.unique(rad_data['target_param'], return_index=True)
-    targets_orig = rad_data['target_param'][np.sort(idx)]
+    _, idx = np.unique(cont_data['target_param'], return_index=True)
+    targets_orig = cont_data['target_param'][np.sort(idx)]
 
-    _, idx = np.unique(rad_data['stimulus_param'], return_index=True)
-    stim_param_orig = rad_data['stimulus_param'][np.sort(idx)]
+    _, idx = np.unique(cont_data['stimulus_param'], return_index=True)
+    stim_param_orig = cont_data['stimulus_param'][np.sort(idx)]
 
     movnum_old = np.arange(nmovs)
     movnum_new = movnum_old
@@ -60,17 +58,17 @@ def create_reassoc_dataset(dir_pre:str, dataset_name:str):
     stim_param_reassoc = {stim_param_orig[i]: stim_param_orig[movnum_new[i]] for i in range(nmovs)}
 
     #create reassociated data for training and test data
-    rad_data = reassoc_uni(
-        rad_data, 'rad', movnum_reassoc, targets_reassoc, stim_param_reassoc)
-    rad_data['test_set1'] = reassoc_uni(
-        rad_data['test_set1'], 'rad', movnum_reassoc, targets_reassoc, stim_param_reassoc)
+    cont_data = reassoc_uni(
+        cont_data, 'rad', movnum_reassoc, targets_reassoc, stim_param_reassoc)
+    cont_data['test_set1'] = reassoc_uni(
+        cont_data['test_set1'], 'rad', movnum_reassoc, targets_reassoc, stim_param_reassoc)
         
     onehot_data = reassoc_uni(
         onehot_data, 'onehot', movnum_reassoc, targets_reassoc, stim_param_reassoc)
     onehot_data['test_set1'] = reassoc_uni(
         onehot_data['test_set1'], 'onehot', movnum_reassoc, targets_reassoc, stim_param_reassoc)
 
-    return rad_data, onehot_data
+    return cont_data, onehot_data
 
 #%%
 def reassoc_uni(data:dict, dataset_type:str, movnum_reassoc:dict, targets_reassoc:dict, stim_params_reassoc:dict):
@@ -155,6 +153,8 @@ def reassoc_uni_onehot_stimulus(data:dict, movnums_new:list):
 
 #%%
 #create reassociated dataset based on existing, preprocessed dataset
+
+# UNI, WITH PREP ###########
 repertoire_pre = 'uni_'
 dir_pre = savdir+repertoire_pre
 
@@ -163,7 +163,13 @@ for nmovs in [2,3,4]:
     for end_param in [30,50,70,90]:
         dataset_name = '_'.join([str(nmovs)+'movs',str(start_param), str(end_param)])
         # print(dataset_name)
-        rad_data, onehot_data = create_reassoc_dataset(dir_pre, dataset_name)
+
+        #load data
+        rad_data = np.load(dir_pre+dataset_name+'_rad'+'.npy', allow_pickle=True).item()
+        onehot_data = np.load(dir_pre+dataset_name+'_onehot'+'.npy', allow_pickle=True).item()
+
+        #create reassociated dataset
+        rad_data, onehot_data = create_reassoc_dataset(rad_data, onehot_data)
         np.save(dir_pre+dataset_name+ '_rad_' + constants.Constants.PERT_REASSOCIATION + '.npy', rad_data)
         np.save(dir_pre+dataset_name+ '_onehot_' + constants.Constants.PERT_REASSOCIATION +'.npy', onehot_data)
 

@@ -63,16 +63,6 @@ def get_args():
         help = "if simulation is a test", 
         nargs='?', const='c'
         )
-    # parser.add_argument(
-    #     '-w', '--wandb', 
-    #     help = "tag to use wandb", 
-    #     nargs='?', const='c'
-    #     )
-    # parser.add_argument(
-    #     '-v', '--vary', 
-    #     help = "vary initial learning", 
-    #     type = str
-    #     )
     parser.add_argument(
         '-gpu', '--gpu_id', 
         type =int,
@@ -105,15 +95,15 @@ def get_args():
         help = "variation number for set of simulation", 
         )
     parser.add_argument(
+        '-cn', '--config_number', 
+        type =int,
+        help = "configuration file number", 
+        )
+    parser.add_argument(
         '-noise', 
         type =float,
         help = "noise to add to dynamics", 
         )
-    # parser.add_argument(
-    #     '-nonlin', 
-    #     type =str,
-    #     help = "nonlinearity in recurrent networks", 
-    #     )
     parser.add_argument(
         '-o', '--optimizer', 
         type =str,
@@ -151,6 +141,9 @@ def set_outdir(config,args):
         outdir = results_folder + 'test/' + seed_str + '/' + config.repertoire + '/'
     else:
         outdir = results_folder + config.sim_set + '/' + seed_str + '/' + config.repertoire + '/' 
+
+    if config.config_number is not None:
+        outdir = outdir + str(config.config_number) + '/'
 
     if config.type == "perturbation":
         sim_num = 'v'+str(args.sim_number) + '/' if args.sim_number is not None else ""
@@ -200,8 +193,6 @@ def set_perturbation_config(config, args, training_dir):
     config.amend_property(property_name="pert_params", new_property_value=args.pert_params)
     config.amend_property(property_name="type", new_property_value=args.type)
     config.amend_property(property_name="training_dir", new_property_value=training_dir)
-    if config.log_interval is None and config.log_epochs is None:
-        config.amend_property(property_name="log_interval", new_property_value=constants.Constants.PERT_LOG_INTERVAL)
 
     return config
 
@@ -213,9 +204,18 @@ def get_config(args):
     if args.type == constants.Constants.PERTURBATION:
         results_folder = constants.Constants.RESULTS_FOLDER
         training_dir = results_folder + args.sim_set + '/' + str(args.seed) + '/' + args.repertoire + '/'
+        
+        if args.config_number is not None:
+            training_dir = training_dir + str(args.config_number) + '/'
+
         config_path = training_dir + 'config.yaml' 
     elif args.type == constants.Constants.INIT_TRAINING:
-        config_path = os.path.join(MAIN_FILE_PATH, args.config)
+
+        if args.config_number is not None:
+            config_file = "config_" + str(args.config_number) + ".yaml"
+        else:
+            config_file = args.config
+        config_path = os.path.join(MAIN_FILE_PATH, 'configs/', config_file)
 
     configuration = base_configuration.BaseConfiguration(
         configuration= config_path, template = ConfigTemplate.base_config_template)
@@ -234,8 +234,6 @@ def get_config(args):
         configuration.amend_property(property_name="istest", new_property_value=True)
         configuration.amend_property(property_name="batch_size", new_property_value=constants.Constants.TEST_BATCH_SIZE)
         configuration.amend_property(property_name="training_trials", new_property_value=constants.Constants.TEST_TRAINING_TRIALS)
-    # if args.wandb:
-    #     configuration.amend_property(property_name="wandb", new_property_value=True)
     if args.freeze_input:
         configuration.amend_property(property_name="freeze_input", new_property_value=True)
     if args.freeze_rec:
@@ -251,8 +249,6 @@ def get_config(args):
         configuration.amend_property(property_name="lr", new_property_value=args.learning_rate)
     if args.noise:
         configuration.amend_property(property_name="noise", new_property_value=args.noise)
-    # if args.nonlin:
-    #     configuration.amend_property(property_name="nonlin", new_property_value=args.nonlin)
     if args.optimizer:
         configuration.amend_property(property_name="optimizer", new_property_value=args.optimizer)
         if args.optimizer == 'FORCE':

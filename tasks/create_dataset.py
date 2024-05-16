@@ -5,6 +5,8 @@
 Author: Barbara Feulner, adapted by Joanna Chang
 Create pytorch dataset from experimental data.
 
+Code shows how dataset_uni.npy and dataset_centerout.npy were created from experimental data.
+
 Create dataset (dict) for movement training.
 The output dimensions are uncorrelated in this implementation.
 The output has time components.
