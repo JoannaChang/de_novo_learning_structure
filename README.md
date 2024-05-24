@@ -13,6 +13,8 @@ This repository includes code to reproduce the simulations and figures in [Chang
 ## Reproducing figures
 Each figure in the paper has an associated Jupyter notebook under ```paper/```. Running the cells reproduces all of the subfigures, and the first cell runs the simulations associated with the figure. Note that the experimental data used for Supplementary Figure 8 is not explicitly included, but most of the data is [publicly available on Dryad](https://datadryad.org/stash/dataset/doi:10.5061/dryad.xd2547dkt). The remaining datasets will be made available on request. The code and figures are still provided.
 
+Note that while the random seeds are specified, different environments may lead to differences in randomization which may lead to slightly different results. However, the results should not significantly deviate from the trends observed in the paper, as the results have remained robust across different random seeds. 
+
 ## System Requirements
 The code has been tested on Linux (Ubuntu 18.04). Around 45GB is required for the data used for all main and supplementary figures, and an additional 7GB is needed for the results.
 
